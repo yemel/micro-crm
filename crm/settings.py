@@ -1,4 +1,6 @@
 # Django settings for crm project.
+import dj_database_url
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -10,30 +12,24 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
-    }
+    'default': dj_database_url.config(default='postgres://localhost')
 }
+
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
+INTERNAL_IPS = ('127.0.0.1',)
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-AR'
 
 SITE_ID = 1
 
@@ -46,7 +42,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
@@ -92,7 +88,12 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = TCP + (
+    'django.core.context_processors.request',
+)
+
 MIDDLEWARE_CLASSES = (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -114,16 +115,18 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'core',
+    'django_extensions',
+    'debug_toolbar',
+
+    'suit',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admin',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -153,4 +156,34 @@ LOGGING = {
             'propagate': True,
         },
     }
+}
+
+SUIT_CONFIG = {
+    'ADMIN_NAME': 'CRM Clientes',
+    'SHOW_REQUIRED_ASTERISK': True,
+    'MENU_OPEN_FIRST_CHILD': True,
+    'CONFIRM_UNSAVED_CHANGES': False,
+    'SEARCH_URL': 'admin:core_client_changelist',
+    'MENU': (
+        {'label': 'Clientes', 'icon': 'icon-book', 'models': (
+            {'model': 'core.client', 'label': 'Clientes'},
+            {'model': 'core.category', 'label': 'Rubros'},
+        )},
+        {'label': 'Trabajos', 'icon': 'icon-flag', 'models': (
+            {'model': 'core.simplejob', },
+            {'model': 'core.regularjob', },
+        )},
+        {'label': 'Servicios', 'icon': 'icon-map-marker', 'models': (
+            {'model': 'core.service', },
+            {'model': 'core.servicetype', },
+        )},
+        {'label': 'Usuarios', 'icon': 'icon-user', 'models': (
+            {'model': 'auth.user', 'label': 'Usuarios'},
+        )},
+    ),
+    'LIST_PER_PAGE': 15
+}
+
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,
 }
