@@ -75,7 +75,7 @@ class Service(Tracked):
 
 
 class Job(Tracked):
-    STATUS = Choices(('budget', 'Presupuestado'), ('progress', 'Aprovado'), ('finished', 'Finalizado'), ('canceled', 'No Aprobado'))
+    STATUS = Choices(('budget', 'Presupuestado'), ('progress', 'Aprobado'), ('finished', 'Finalizado'), ('canceled', 'No Aprobado'))
     status = StatusField(verbose_name=u'estado')
 
     client = models.ForeignKey(Client, verbose_name=u'cliente')
@@ -83,7 +83,6 @@ class Job(Tracked):
     price = models.FloatField(verbose_name=u'precio')
 
     comments = models.TextField(null=True, blank=True, verbose_name=u'comentarios')
-    attachment = models.FileField(null=True, blank=True, upload_to='./work', verbose_name=u'presupuesto')
 
     def __unicode__(self):
         return '{} - {}'.format(self.service, self.client)
