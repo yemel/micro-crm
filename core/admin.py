@@ -6,31 +6,39 @@ from django.db.models import Q
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
+    exclude = ('created', 'modified')
 
 
 class SimpleJobInline(admin.TabularInline):
     model = models.SimpleJob
     extra = 0
-    fields = ('service', 'status', 'price')
-    readonly_fields = ('price', 'status', 'service')
+    fields = ('service', 'status', 'price', 'created')
+    readonly_fields = ('price', 'status', 'service', 'created')
 
     def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj):
         return False
 
 
 class RegularJobInline(admin.TabularInline):
     model = models.RegularJob
     extra = 0
-    fields = ('service', 'status', 'price')
-    readonly_fields = ('price', 'status', 'service')
+    fields = ('service', 'status', 'price', 'created')
+    readonly_fields = ('price', 'status', 'service', 'created')
 
     def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj):
         return False
 
 
 class ClientAdmin(admin.ModelAdmin):
     list_display = ('company', 'contact', 'category', 'cuit')
     list_filter = ('category',)
+    exclude = ('created', 'modified')
     search_fields = ('company', 'contact', 'cuit')
     inlines = [SimpleJobInline, RegularJobInline]
 
@@ -39,10 +47,12 @@ class ServiceAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'kind')
     list_filter = ('category', 'kind')
     search_fields = ('name',)
+    exclude = ('created', 'modified')
 
 
 class ServiceTypeAdmin(admin.ModelAdmin):
     list_display = ('name',)
+    exclude = ('created', 'modified')
 
 
 class SimpleJobForm(forms.ModelForm):
@@ -71,7 +81,7 @@ class RegularJobAdmin(admin.ModelAdmin):
     list_display = ('client', 'service', 'price', 'status', 'created')
     list_filter = ('status', 'service', 'created')
     search_fields = ('client__company', 'client__contact', 'client__cuit')
-    fields = ('status', 'client', 'service', 'price', 'start_date', 'end_date', 'comments')
+    fields = ('status', 'client', 'service', 'price', 'comments')
     form = RegularJobForm
 
 admin.site.register(models.Category, CategoryAdmin)

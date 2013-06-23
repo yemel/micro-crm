@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 
 from django.db import models
 from model_utils import Choices
@@ -6,8 +7,15 @@ from model_utils.fields import StatusField
 
 
 class Tracked(models.Model):
-    created = models.DateField(auto_now_add=True, editable=True, null=True, verbose_name=u'fecha de creación')
-    modified = models.DateField(auto_now=True, editable=True, null=True, verbose_name=u'fecha de modificación')
+    created = models.DateField(null=True, blank=True, verbose_name=u'fecha de creación')
+    modified = models.DateField(null=True, blank=True, verbose_name=u'fecha de modificación')
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created = datetime.datetime.today()
+        self.modified = datetime.datetime.today()
+        super(Tracked, self).save(*args, **kwargs)
 
     class Meta:
         abstract = True
