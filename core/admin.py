@@ -56,7 +56,7 @@ class SimpleJobAdmin(admin.ModelAdmin):
     list_display = ('client', 'service', 'price', 'status', 'created')
     list_filter = ('status', 'service', 'created')
     search_fields = ('client__company', 'client__contact', 'client__cuit')
-    fields = ('status', 'client', 'service', 'price', 'advance', 'deadline', 'comments', 'attachment')
+    fields = ('status', 'client', 'service', 'price', 'advance', 'deadline', 'comments')
     form = SimpleJobForm
 
 
@@ -71,6 +71,7 @@ class RegularJobAdmin(admin.ModelAdmin):
     list_display = ('client', 'service', 'price', 'status', 'created')
     list_filter = ('status', 'service', 'created')
     search_fields = ('client__company', 'client__contact', 'client__cuit')
+    fields = ('status', 'client', 'service', 'price', 'start_date', 'end_date', 'comments')
     form = RegularJobForm
 
 admin.site.register(models.Category, CategoryAdmin)
